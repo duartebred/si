@@ -70,3 +70,44 @@ class Model(Estimator, ABC):
         """
         self.fit(dataset)
         return self.predict(dataset)
+    
+    def _score(self, dataset) -> float:
+        """
+        Score the model on the dataset.
+        Abstract method that needs to be implemented by all subclasses.
+
+        Parameters
+        ----------
+        dataset: Dataset
+            The dataset to score the model on.
+
+        Returns
+        -------
+        score: float
+            The score of the model on the dataset.
+        """
+        pass
+
+    def score(self, dataset, predictions: np.ndarray) -> float:
+        """
+        Score the model on the dataset.
+
+        Parameters
+        ----------
+        dataset: Dataset
+            The dataset to score the model on.
+
+        Returns
+        -------
+        score: float
+            The score of the model on the dataset.
+        """
+        if self.is_fitted():
+            predictions = self.predict(dataset = dataset)
+            self._score(dataset, predictions = predictions)
+
+        else:
+            raise ValueError("Your model is not fitted, please call method.fit") 
+
+        
+ 
