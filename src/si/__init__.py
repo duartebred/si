@@ -1,9 +1,9 @@
-__author__ = "João Capela"
-__credits__ = ["João Capela", "João Correia, Fernando Cruz", "Vítor Pereira"]
+__author__ = "Duarte Velho"
+__credits__ = ["Duarte Velho"]
 __license__ = "Apache License 2.0"
 __version__ = "0.0.1"
-__maintainer__ = "João Capela"
-__email__ = "joao.capela@ceb.uminho.pt"
+__maintainer__ = "Duarte Velho"
+__email__ = "duartealvesvelho@gmail.com"
 
 # -----------------------------------------------------------------------------------
 # This package is heavily inspired and adapted from
