@@ -1,40 +1,5 @@
-<<<<<<< HEAD
-from si.data.dataset import Dataset
-
-import numpy as np
-
-def train_test_split(dataset: Dataset, test_size: float, random_state = 123):
-    """
-    Splits the dataset into training and testing datasets.
-
-    Arguments:
-    - dataset: the Dataset object to split into training and testing data.
-    - test_size: the proportion of the dataset to be used as test data (e.g., 0.2 for 20%).
-    - random_state: seed for generating permutations.
-
-    Returns:
-    - A tuple containing the train and test datasets.
-    """
-    
-    np.random.seed(random_state)
-    
-    
-    permutations = np.random.permutation(dataset.X.shape()[0])
-    
-    test_sample_size = int(dataset.shape()[0] * test_size)
-    
-    test_idx = permutations[:test_sample_size]
-    train_idx = permutations[test_sample_size:]
-    
-    train_dataset = Dataset(X=dataset.X[train_idx :], y=dataset.y[train_idx] )
-    test_dataset = 
-    
-    return train_dataset, test_dataset
-=======
 from typing import Tuple
-
 import numpy as np
-
 from si.data.dataset import Dataset
 
 
@@ -74,4 +39,64 @@ def train_test_split(dataset: Dataset, test_size: float = 0.2, random_state: int
     train = Dataset(dataset.X[train_idxs], dataset.y[train_idxs], features=dataset.features, label=dataset.label)
     test = Dataset(dataset.X[test_idxs], dataset.y[test_idxs], features=dataset.features, label=dataset.label)
     return train, test
->>>>>>> fbc169728b98e367666356bfbcb2f3ef9365e45f
+
+
+def stratified_train_test_split(dataset: Dataset, test_size: float = 0.2, random_state: int = 42) -> Tuple[Dataset, Dataset]:
+    """
+    It divides the data set into training and test sets, maintaining the proportion of classes.
+
+    Parameters
+    ----------
+    dataset : Dataset
+        The data set to be split.
+    test_size : float, optional
+        Proportion of the test set to the total (default is 0.2).
+    random_state : int, optional
+        Seed for the random number generator (default is 42).
+
+    Returns
+    -------
+    Tuple[Dataset, Dataset]
+        A pair containing the training and test sets.
+
+    Raises
+    -----
+    ValueError
+        If `test_size` is not in the range between 0 and 1.
+    """
+    if not (0 < test_size < 1):
+        raise ValueError("The size of the test set must be a value between 0 and 1.")
+
+    # Configurar o gerador de números aleatórios
+    np.random.seed(random_state)
+
+    # Identificar as classes únicas e suas contagens
+    labels, counts = np.unique(dataset.y, return_counts=True)
+
+    # Inicializar listas para índices de treino e teste
+    train_indices, test_indices = [], []
+
+    # Dividir os índices para cada classe
+    for label, count in zip(labels, counts):
+        label_indices = np.where(dataset.y == label)[0]
+        np.random.shuffle(label_indices)
+        
+        split_index = int(count * (1 - test_size))
+        train_indices.extend(label_indices[:split_index])
+        test_indices.extend(label_indices[split_index:])
+
+    # Criar os conjuntos de treino e teste
+    train_dataset = Dataset(
+        X=dataset.X[train_indices],
+        y=dataset.y[train_indices],
+        features=dataset.features,
+        label=dataset.label
+    )
+    test_dataset = Dataset(
+        X=dataset.X[test_indices],
+        y=dataset.y[test_indices],
+        features=dataset.features,
+        label=dataset.label
+    )
+
+    return train_dataset, test_dataset
