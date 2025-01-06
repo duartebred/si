@@ -177,3 +177,83 @@ class ReLUActivation(ActivationLayer):
             The derivative of the activation function.
         """
         return np.where(input >= 0, 1, 0)
+
+class TanhActivation(ActivationLayer):
+    """
+    TanhActivation applies the hyperbolic tangent function element-wise, 
+    compressing input values to a range between -1 and 1.
+    """
+
+    def activation_function(self, input: np.ndarray) -> np.ndarray:
+        """
+        Compute the hyperbolic tangent of the input.
+
+        Parameters
+        ----------
+        input : np.ndarray
+            Input array to which the tanh function will be applied.
+
+        Returns
+        -------
+        np.ndarray
+            Output array with the tanh function applied element-wise.
+        """
+        return np.tanh(input)
+
+    def derivative(self, input: np.ndarray) -> np.ndarray:
+        """
+        Compute the derivative of the tanh function.
+
+        Parameters
+        ----------
+        input : np.ndarray
+            Input array for which the derivative will be calculated.
+
+        Returns
+        -------
+        np.ndarray
+            Output array with the derivative of tanh applied element-wise.
+        """
+        tanh_output = self.activation_function(input)
+        return 1 - tanh_output ** 2
+
+class SoftmaxActivation(ActivationLayer):
+    """
+    SoftmaxActivation converts raw output scores into probabilities, 
+    making it suitable for multi-class classification tasks.
+    """
+
+    def activation_function(self, input: np.ndarray) -> np.ndarray:
+        """
+        Apply the softmax function to the input to compute probabilities.
+
+        Parameters
+        ----------
+        input : np.ndarray
+            Input array where softmax will be applied.
+
+        Returns
+        -------
+        np.ndarray
+            Output array with probabilities, summing to 1 for each sample.
+        """
+        # Subtract the maximum for numerical stability
+        exp_values = np.exp(input - np.max(input, axis=1, keepdims=True))
+        return exp_values / np.sum(exp_values, axis=1, keepdims=True)
+
+    def derivative(self, input: np.ndarray) -> np.ndarray:
+        """
+        Compute the derivative of the softmax function.
+
+        Parameters
+        ----------
+        input : np.ndarray
+            Input array for which the derivative will be computed.
+
+        Returns
+        -------
+        np.ndarray
+            Output array with the derivative of the softmax applied element-wise.
+        """
+        softmax_output = self.activation_function(input)
+        return softmax_output * (1 - softmax_output)
